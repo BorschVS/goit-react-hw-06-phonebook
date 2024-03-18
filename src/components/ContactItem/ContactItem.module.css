@@ -1,6 +1,9 @@
 .ContactList__item {
+  position: relative;
   display: flex;
   gap: 40px;
+  max-width: 500px;
+  justify-content: space-between;
   align-content: center;
   align-items: center;
   border-bottom: 1px solid #ddd;
@@ -9,6 +12,7 @@
 
 .ContactList__item p.text {
   margin-right: 10px;
+  overflow: hidden;
 }
 
 .ContactList__item a.number {

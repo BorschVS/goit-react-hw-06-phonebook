@@ -1,40 +1,33 @@
-import { useReducer } from 'react';
 import css from './ContactForm.module.css';
+import { useDispatch, useSelector } from 'react-redux';
+import { changeField, resetForm } from '../../redux/formSlice';
+import { addContact } from '../../redux/contactsSlice';
+import { getContacts, getFormData } from '../../redux/selectors';
+import { toast } from 'react-toastify';
+import 'react-toastify/dist/ReactToastify.css';
 
-function formReducer(_, action) {
-  switch (action.type) {
-    case 'change':
-      return { name: action.name, number: action.number };
+export default function ContactForm() {
+  const dispatch = useDispatch();
+  const form = useSelector(getFormData);
+  const contacts = useSelector(getContacts);
 
-    case 'reset':
-      return initialState;
-
-    default:
-      throw new Error('invalid action:' + action.type);
+  function contactExists(currentName) {
+    return contacts.find(({ name }) => name === currentName) !== undefined;
   }
-}
-
-const initialState = {
-  name: '',
-  number: '',
-};
-
-export default function ContactForm({ onSubmit, contains }) {
-  const [state, dispatch] = useReducer(formReducer, initialState);
 
   function handleChange(e) {
     const { name, value } = e.currentTarget;
-    dispatch({ ...state, type: 'change', [name]: value });
+    dispatch(changeField({ ...form, [name]: value }));
   }
 
   function handleSubmit(e) {
     e.preventDefault();
 
-    contains(state.name)
-      ? alert(`${state.name} is already in contacts`)
-      : onSubmit(state);
+    contactExists(form.name)
+      ? toast.error(`${form.name} is already in contacts`)
+      : dispatch(addContact(form));
 
-    !contains(state.name) && dispatch({ type: 'reset' });
+    !contactExists(form.name) && dispatch(resetForm());
   }
 
   return (
@@ -42,10 +35,11 @@ export default function ContactForm({ onSubmit, contains }) {
       <label className={css.Form__label}>
         Name
         <input
+          maxLength={20}
           className={css.Form__input}
           type="text"
           name="name"
-          value={state.name}
+          value={form.name || ''}
           onChange={handleChange}
           required
         />
@@ -54,10 +48,11 @@ export default function ContactForm({ onSubmit, contains }) {
       <label className={css.Form__label}>
         Number
         <input
+          maxLength={20}
           className={css.Form__input}
           type="tel"
           name="number"
-          value={state.number}
+          value={form.number || ''}
           onChange={handleChange}
           required
         />
