@@ -1,15 +1,15 @@
 import css from './ContactForm.module.css';
 import { useDispatch, useSelector } from 'react-redux';
-import { changeField, resetForm } from '../../redux/formSlice';
 import { addContact } from '../../redux/contactsSlice';
-import { getContacts, getFormData } from '../../redux/selectors';
+import { getContacts } from '../../redux/selectors';
 import { toast } from 'react-toastify';
 import 'react-toastify/dist/ReactToastify.css';
+import { useState } from 'react';
 
 export default function ContactForm() {
   const dispatch = useDispatch();
-  const form = useSelector(getFormData);
   const contacts = useSelector(getContacts);
+  const [formData, setFormData] = useState({});
 
   function contactExists(currentName) {
     return contacts.find(({ name }) => name === currentName) !== undefined;
@@ -17,17 +17,18 @@ export default function ContactForm() {
 
   function handleChange(e) {
     const { name, value } = e.currentTarget;
-    dispatch(changeField({ ...form, [name]: value }));
+    setFormData({ ...formData, [name]: value });
   }
 
   function handleSubmit(e) {
     e.preventDefault();
+    const { name } = e.currentTarget;
 
-    contactExists(form.name)
-      ? toast.error(`${form.name} is already in contacts`)
-      : dispatch(addContact(form));
+    contactExists(formData.name)
+      ? toast.error(`${formData.name} is already in contacts`)
+      : dispatch(addContact(formData));
 
-    !contactExists(form.name) && dispatch(resetForm());
+    !contactExists(formData.name) && setFormData({[name]: ""});
   }
 
   return (
@@ -39,7 +40,7 @@ export default function ContactForm() {
           className={css.Form__input}
           type="text"
           name="name"
-          value={form.name || ''}
+          value={formData.name || ''}
           onChange={handleChange}
           required
         />
@@ -52,13 +53,13 @@ export default function ContactForm() {
           className={css.Form__input}
           type="tel"
           name="number"
-          value={form.number || ''}
+          value={formData.number || ''}
           onChange={handleChange}
           required
         />
       </label>
 
-      <button className={css.Form__button} type="submit">
+      <button type="submit" className={css.Form__button}>
         Add contact
       </button>
     </form>

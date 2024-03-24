@@ -8,7 +8,7 @@ const ContactList = () => {
   const filter = useSelector(getFilterQuery);
 
   const visibleContacts = contacts.filter(contact => {
-    return contact.name.toLowerCase().includes(filter);
+    return contact.name.toLowerCase().includes(filter.toLowerCase());
   });
 
   return (
