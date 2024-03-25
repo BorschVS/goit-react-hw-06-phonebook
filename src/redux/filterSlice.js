@@ -1,9 +1,5 @@
 import { createSlice } from '@reduxjs/toolkit';
 
-//persistor
-import { persistReducer } from 'redux-persist';
-import storage from 'redux-persist/lib/storage';
-
 export const filterSlice = createSlice({
   name: 'filter',
   initialState: { query: '' },
@@ -14,11 +10,6 @@ export const filterSlice = createSlice({
   },
 });
 
-const persistConfig = {
-  key: 'filter',
-  storage,
-};
-
-export const filterReducer = persistReducer(persistConfig, filterSlice.reducer);
+export const filterReducer = filterSlice.reducer;
 
 export const { searchQuery } = filterSlice.actions;
