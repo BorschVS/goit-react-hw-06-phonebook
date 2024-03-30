@@ -1,14 +1,14 @@
 import css from './ContactForm.module.css';
 import { useDispatch, useSelector } from 'react-redux';
 import { addContact } from '../../redux/contactsSlice';
-import { getContacts } from '../../redux/selectors';
+import { selectContacts } from '../../redux/selectors';
 import { toast } from 'react-toastify';
 import 'react-toastify/dist/ReactToastify.css';
 import { useState } from 'react';
 
 export default function ContactForm() {
   const dispatch = useDispatch();
-  const contacts = useSelector(getContacts);
+  const contacts = useSelector(selectContacts);
   const [formData, setFormData] = useState({});
 
   function contactExists(currentName) {
@@ -28,7 +28,7 @@ export default function ContactForm() {
       ? toast.error(`${formData.name} is already in contacts`)
       : dispatch(addContact(formData));
 
-    !contactExists(formData.name) && setFormData({[name]: ""});
+    !contactExists(formData.name) && setFormData({ [name]: '' });
   }
 
   return (
